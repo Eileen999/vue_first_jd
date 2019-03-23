@@ -53,7 +53,7 @@
 		background-color: red;
 	}
 	
-	.product {
+	.product-list .product {
 		width: 50%;
 		padding: 0px 2px 4px 0;
 		box-sizing: border-box;

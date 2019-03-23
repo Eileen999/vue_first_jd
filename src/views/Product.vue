@@ -5,7 +5,7 @@
 		<top-bar>
 
 			<ul class="flex top-nav">
-				<li class="flex-item" :class="{active:navIndex==index}" v-for="(item,index) in nav" :key="index" @click="navIndex=index">
+				<li class="flex-item" :class="{active:navIndex==index}" v-for="(item,index) in nav" :key="index" @click="scroll(index);">
 					<span v-text="item.title"></span>
 				</li>
 			</ul>
@@ -43,6 +43,24 @@
 					top: 0
 				}],
 			};
+		},methods:{
+			scroll(index){
+				this.navIndex=index;
+				var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+				var count=50;
+				var step=(this.nav[this.navIndex].top-scrollTop)/count;
+				var timeout=8;
+				var t=setInterval(()=>{
+					scrollTop+=step;
+					document.documentElement.scrollTop = scrollTop;
+					document.body.scrollTop = scrollTop;
+					count--;
+					if(count<=0){
+						clearInterval(t);
+						this.navIndex=index;
+					}
+				},timeout);
+			}
 		},
 		created() {
 			window.onscroll = (e) => {
