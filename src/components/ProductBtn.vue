@@ -18,7 +18,9 @@
 		<div class="btn flex-item btn-add-cart" @click="show=true">加入购物车</div>
 		<div class="btn flex-item btn-buy" @click="show=true">立即购买</div>
 
-		<product-sku v-model="show"></product-sku>
+		<!--<product-sku v-model="show"></product-sku>-->
+		<product-sku v-model="show" @ok="ok"></product-sku>
+
 	</div>
 
 </template>
@@ -28,8 +30,16 @@
 	export default {
 		data() {
 			return {
-				show:false,
+				show: false,
 			};
+		},
+		methods: {
+			ok(color, size, count) {
+				this.show = false;
+				console.log(color);
+				console.log(size);
+				console.log(count);
+			}
 		},
 		components: {
 			ProductSku
@@ -47,6 +57,7 @@
 		color: #999;
 		font-size: 0.24rem;
 		text-align: center;
+		background-color: #FFFFFF;
 	}
 	
 	.product .icon {

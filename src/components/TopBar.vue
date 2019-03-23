@@ -8,7 +8,7 @@
 
 		</div>
 
-		<div class="flex-item">
+		<div class="flex-item" style="padding: 0 30px;">
 
 			<slot></slot>
 
@@ -39,11 +39,11 @@
 				show: false,
 				menu: [{
 					title: '首页',
-					url: '/',
+					url: '#',
 					icon: 'fa-home'
 				}, {
 					title: '分类搜索',
-					url: '/category',
+					url: '#',
 					icon: 'fa-search'
 				}, {
 					title: '我的京东',
@@ -75,6 +75,7 @@
 		top: 0px;
 		left: 0px;
 		border-bottom: 1px solid #e5e5e5;
+		background-color: #FFFFFF;
 	}
 	
 	.top-bar .back-icon {
