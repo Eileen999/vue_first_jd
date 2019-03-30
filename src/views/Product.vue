@@ -10,7 +10,20 @@
 				</li>
 			</ul>
 		</top-bar>
+			<div style="height: 0.9rem;"></div>
+<!-- Swiper -->
+		<div :class="{preview:preview}">
+		<div class="swiper-container"  @click="preview=!preview;">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide" v-for="(item,index) in images">
+					<img :src="item.src" />
+				</div>
+			</div>
+			<!-- Add Pagination -->
+			<div class="swiper-pagination"></div>
+		</div>
 
+		</div>
 		<div ref="goods" style="height: 1500px;background-color: red;"></div>
 		<div ref="comment" style="height: 1002px;background-color: green;"></div>
 		<div ref="detail" style="height: 998px;background-color: blue;"></div>
@@ -42,6 +55,25 @@
 					title: '推荐',
 					top: 0
 				}],
+				images: [{
+						url: '#',
+						src: require("@/assets/images/iphone1.jpg")
+					},
+					{
+						url: '#',
+						src: require("@/assets/images/iphone2.jpg")
+					},
+					{
+						url: '#',
+						src: require("@/assets/images/iphone3.jpg")
+					},
+					{
+						url: '#',
+						src: require("@/assets/images/iphone1.jpg")
+					}
+				],
+				imageSwiper: null,
+				preview: false
 			};
 		},methods:{
 			scroll(index){
@@ -108,5 +140,22 @@
 		padding-left: 0.26rem;
 		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAYBAMAAAABjmA/AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAnUExURek7PUdwTO49Peg6Peo6Puc6Pek6POk6POg6POg7PeY8POg6POk6PApBjXgAAAANdFJOU/8ADttQPYvEqJYqW/KuifCQAAAAjklEQVQI10XOsRGCQBAF0D8eA6Imn4ERMh0tgDE2UDqgA2Ij7UA6gA6MjCnB0vzLBlxw92Z379+B/F7DgwQraI3C05AQc0ElfBCac40NOlzIE2LUuJM5gtpHMtPxc+yW1tuH15j8+hYHD1yhdPQoHO3yKG+GSNgbXsI81AocgNS+qlgLFwrrGNjFdFS9tj82HhIeoIR1QQAAAABJRU5ErkJggg==) no-repeat 0;
 		background-size: 0.16rem;
+	}
+	
+	.swiper-container {}
+	
+	.swiper-container img {
+		width: 100%;
+	}
+	
+	.preview {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding-top: 2rem;
+		background-color: #000000;
+		z-index: 9999;
 	}
 </style>
