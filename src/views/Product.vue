@@ -5,13 +5,15 @@
 		<top-bar>
 
 			<ul class="flex top-nav">
-				<li class="flex-item" :class="{active:navIndex==index}" v-for="(item,index) in nav" :key="index" @click="scroll(index);">
+				<li class="flex-item" :class="{active:navIndex==index}" v-for="(item,index) in nav" :key="index" @click="scroll(index)">
 					<span v-text="item.title"></span>
 				</li>
 			</ul>
 		</top-bar>
-			<div style="height: 0.9rem;"></div>
-<!-- Swiper -->
+
+		<div style="height: 0.9rem;"></div>
+
+		<!-- Swiper -->
 		<div :class="{preview:preview}">
 		<div class="swiper-container"  @click="preview=!preview;">
 			<div class="swiper-wrapper">
@@ -35,6 +37,8 @@
 </template>
 
 <script>
+	import Swiper from "swiper";
+	import "swiper/dist/css/swiper.css";
 	import TopBar from "@/components/TopBar";
 	import ProductBtn from "@/components/ProductBtn";
 
@@ -75,23 +79,28 @@
 				imageSwiper: null,
 				preview: false
 			};
-		},methods:{
-			scroll(index){
-				this.navIndex=index;
+		},
+		methods: {
+			scroll(index) {
+				this.navIndex = index;
 				var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-				var count=50;
-				var step=(this.nav[this.navIndex].top-scrollTop)/count;
-				var timeout=8;
-				var t=setInterval(()=>{
-					scrollTop+=step;
+				// 动画次数
+				var count = 50;
+				// 步进值
+				var step = (this.nav[this.navIndex].top - scrollTop) / count;
+				// 时间片
+				var timeOut = 10;
+				// 利用定时器实现一个动画
+				var t = setInterval(() => {
+					scrollTop += step;
 					document.documentElement.scrollTop = scrollTop;
 					document.body.scrollTop = scrollTop;
 					count--;
-					if(count<=0){
+					if(count <= 0) {
 						clearInterval(t);
-						this.navIndex=index;
+						this.navIndex = index;
 					}
-				},timeout);
+				}, timeOut);
 			}
 		},
 		created() {
@@ -105,13 +114,26 @@
 				});
 
 			}
-			//箭头函数(e)=>等同于function(e),用它的原因是防止this的指向问题会乱。
 		},
+		watch: {
+			preview(val) {
+				
+			}
+		},
+		// 整个页面渲染完成
 		mounted() {
 			this.nav[0].top = this.$refs['goods'].offsetTop;
 			this.nav[1].top = this.$refs['comment'].offsetTop;
 			this.nav[2].top = this.$refs['detail'].offsetTop;
 			this.nav[3].top = this.$refs['recommend'].offsetTop;
+			this.imageSwiper = new Swiper('.swiper-container', {
+				loop: true,
+				autoplay: true,
+				pagination: {
+					el: '.swiper-pagination',
+					clickable: true,
+				},
+			});
 		},
 		components: {
 			TopBar,
@@ -122,7 +144,7 @@
 </script>
 
 <style>
-	.product{
+	.product {
 		width: 100%;
 	}
 	

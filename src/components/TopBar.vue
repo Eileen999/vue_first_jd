@@ -13,8 +13,9 @@
 			<slot></slot>
 
 		</div>
-
-		<div class="menu" @click="show=true;">
+           <slot name="right"></slot>
+           
+		<div class="menu" @click="show=true;" v-if="shortcut">
 			<span class="menu-icon"></span>
 			<div class="mask" v-show="show" @click.stop="show=false;"></div>
 			<ul v-show="show">
@@ -63,6 +64,11 @@
 					icon: 'fa-share-square-o'
 				}]
 			}
+		},props:{
+			shortcut:{
+				type:Boolean,
+				default:false
+			}
 		}
 	}
 </script>
@@ -76,6 +82,7 @@
 		left: 0px;
 		border-bottom: 1px solid #e5e5e5;
 		background-color: #FFFFFF;
+		z-index: 9999;
 	}
 	
 	.top-bar .back-icon {

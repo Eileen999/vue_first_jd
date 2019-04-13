@@ -81,9 +81,8 @@
 			//			}
 
 			this.navIndex = this.$route.params.index >= 0 ? this.$route.params.index : 0;
-		},watch(index){
-          this.navIndex = index;
-    }
+		}
+
 	}
 </script>
 

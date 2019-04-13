@@ -1,9 +1,9 @@
 <template>
-	
 
-		<div class="check-box" :class="{checked:check}" @click="onChange" >
+	<div class="check-box" :class="{checked:check}" @click="onChange">
 
 	</div>
+
 </template>
 
 <script>
@@ -30,7 +30,6 @@
 			}
 		},
 		watch: {
-			
 			arr(val) {
 				if(typeof val == 'boolean') {
 					this.check = val;

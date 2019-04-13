@@ -3,16 +3,16 @@
 	<div class="submit-bar flex">
 
 		<div class="select-all">
-			<check-box></check-box>
+			<check-box :arr="value" @input="selectAll" ></check-box>
 			<div>全选</div>
 		</div>
 
 		<div class="sum-price flex-item">
-			总计：<span>￥0.00</span>
+			总计：<span>￥{{sum}}</span>
 		</div>
 
-		<div class="pay-btn ">
-			去结算<span>(2件)</span>
+		<div class="pay-btn " :class="{disabled:count==0}">
+			去结算<span>({{count}}件)</span>
 		</div>
 
 	</div>
@@ -23,6 +23,30 @@
 	import CheckBox from "@/components/CheckBox";
 
 	export default {
+		data(){
+			return {
+				a:false,
+			}
+		},
+		props:{
+			value:{
+				type:Boolean,
+				default:false
+			},
+			count:{
+				type:Number,
+				default:0
+			},
+			sum:{
+				type:Number,
+				default:0
+			}
+		},
+		methods:{
+			selectAll(val){
+				this.$emit('input',val);
+			}
+		},
 		components: {
 			CheckBox
 		}
@@ -55,8 +79,7 @@
 			height: 0.3rem;
 			line-height: 0.3rem;
 			color: #999;
-			
-			.check-box{
+			.check-box {
 				position: absolute;
 				top: 0.15rem;
 				left: 0.2rem;
@@ -68,26 +91,25 @@
 			padding-right: 0.2rem;
 			font-weight: 700;
 			font-size: 0.32rem;
-			span{
-				    color: #e93b3d;
-    font-family: arial;
+			span {
+				color: #e93b3d;
+				font-family: arial;
 			}
 		}
 		.pay-btn {
-		    width: 2.2rem;
-		    height: 1rem;
-		    line-height: 1rem;
-		    font-size: 0.32rem;
-		    text-align: center;
-		    font-weight: 700;
-		    background: #e4393c;
-		    color: #fff;
+			width: 2.2rem;
+			height: 1rem;
+			line-height: 1rem;
+			font-size: 0.32rem;
+			text-align: center;
+			font-weight: 700;
+			background: #e4393c;
+			color: #fff;
 			span {
 				font-size: 0.24rem;
-				font-weight:0.24rem;
+				font-weight: 0.24rem;
 			}
-			
-			&.disabled{
+			&.disabled {
 				background: #d7d7d7;
 			}
 		}
