@@ -1,18 +1,18 @@
 <template>
 	<div class="tab-bar">
 		<ul class="flex">
-			<li class="flex-item" :class="{active:navIndex==index}" @click="goTo(index)" v-for="(item,index) in nav" :key="index">
+			<li class="flex-item" v-for="(item,index) in nav" :key="index">
 				<!--
 					path:通过路径进行路由的跳转，参数传递只能用 query
 					name:通过路由的名称进行跳转，参数传递可以用query和params
 				-->
 				<!--<router-link :to="{path:item.url,query:{index:index}}">-->
-				<!--<router-link :to="{name:item.name,query:{index:index},params:{index:index}}">
+				<router-link :to="{name:item.name}">
 					<span :class="item.icon"></span>
 					<div class="title" v-text="item.title"></div>
-				</router-link>-->
-				<span :class="item.icon"></span>
-				<div class="title" v-text="item.title"></div>
+				</router-link>
+				<!--<span :class="item.icon"></span>
+				<div class="title" v-text="item.title"></div>-->
 			</li>
 		</ul>
 	</div>
@@ -53,20 +53,20 @@
 			};
 		},
 		methods: {
-			goTo(index) {
-				this.navIndex = index;
-				//	this.$router.push(this.nav[index].url);
-				//	this.$router.push({path:this.nav[index].url,query:{index:index}});
-				this.$router.push({
-					name: this.nav[index].name,
-					query: {
-						index: index
-					},
-					params: {
-						index: index
-					}
-				});
-			}
+//			goTo(index) {
+//				this.navIndex = index;
+//				//	this.$router.push(this.nav[index].url);
+//				//	this.$router.push({path:this.nav[index].url,query:{index:index}});
+//				this.$router.push({
+//					name: this.nav[index].name,
+//					query: {
+//						index: index
+//					},
+//					params: {
+//						index: index
+//					}
+//				});
+//			}
 		},
 		created() {
 			// 全局的路由对象
@@ -80,7 +80,7 @@
 			//				this.navIndex = 0;
 			//			}
 
-			this.navIndex = this.$route.params.index >= 0 ? this.$route.params.index : 0;
+//			this.navIndex = this.$route.params.index >= 0 ? this.$route.params.index : 0;
 		}
 
 	}
@@ -112,12 +112,9 @@
 	.tab-bar .fa {
 		font-size: 0.48rem;
 	}
-	
-	.tab-bar .active {
+	/* 当前路由页面 */
+	.tab-bar .router-link-exact-active{
 		color: #f23030;
 	}
 	
-	.tab-bar .active a {
-		color: #f23030;
-	}
 </style>

@@ -1,20 +1,21 @@
 <template>
+<!--搜索结果类表页面-->
 	<div id="search-result">
 		<top-bar shortcut>
 			<div class="search-form">
 				<i class="search-icon"></i>
 				<input type="text" v-model="search" placeholder="请输入搜索内容" @focus="$router.push({path:'/search',query:{search:search}});" />
-				<!--focus鼠标聚焦-->
 			</div>
 		</top-bar>
+
 		<div class="sort-option flex">
-			<div class="sort-item flex-item" @click="optionShow=optionShow==0?1:0;">
-				<span :style="{color:sortIndex>-1?'#e93b3d':'#333'}">{{sort[sortIndex>0?sortIndex:0]}}<i class="arrow"></i></span>
+			<div class="sort-item flex-item" @click="optionShow=optionShow==0?1:0">
+				<span :style="{color:sortIndex>-1?'#e93b3d':'#333'}" >{{sort[sortIndex<0?0:sortIndex]}}<i class="arrow"></i></span>
 			</div>
 			<div class="sort-item  flex-item">
 				<span>销量</span>
 			</div>
-			<div class="sort-item  flex-item" @click="optionShow=3">
+			<div class="sort-item  flex-item">
 				<span>服务<i class="arrow"></i></span>
 			</div>
 			<div class="sort-item  flex-item" @click="optionShow=4">
@@ -23,55 +24,55 @@
 			<div class="option-group">
 				<div class="sort" v-show="optionShow==1">
 					<ul>
-						<li :class="{active:index==sortIndex}" v-for="(item,index) in sort" v-text="item" :key="index" @click="sortIndex=index;"></li>
+						<li :class="{active:index==sortIndex}" v-for="(item,index) in sort" v-text="item" :key="index" @click="sortIndex=index;optionShow=0;"></li>
 					</ul>
 				</div>
 				<div class="sale-count"></div>
-				<div class="service" v-show="optionShow==3" v-for="(item,index) in arr" :key="index">
-					<check-box class="service-check"></check-box>
-					<span v-text="item" class="select-service"></span>
+				<div class="service" v-show="optionShow==3"></div>
+				<div class="filter" style="z-index: 1;" :class="{active:optionShow==4}">
+					
 				</div>
-				<div class="filter" style="z-index: 1;" :class="{active:optionShow==4}"></div>
-				<div class="mask" @click="optionShow=0;" v-show="optionShow==4" style="z-index: 0;background-color: rgba(0, 0, 0, .5);"></div>
+				<div class="mask" @click.stop="optionShow=0" v-show="optionShow==4" style="z-index: 0;"></div>
 			</div>
-			<div class="mask" @click="optionShow=0;" v-show="optionShow>0&&optionShow!=4"></div>
+			<div class="mask" @click.stop="optionShow=0" v-show="optionShow>0&&optionShow!=4"></div>
 		</div>
-
-		<search-product v-for="(item,index) in products" :image="image" :title="title" :price="price" :comment="comment" :shop="shop" @click=""></search-product>
+		
+		<div style="height: 2rem;"></div>
+		
+		<search-product v-for="(item,index) in products" :price="item.product_price" :id="item.id" :image="'http://api.niyinlong.com'+item.product_thumb" :title="item.product_title"></search-product>
+		
 	</div>
 
 </template>
 
 <script>
 	import TopBar from "@/components/TopBar";
-	import CheckBox from "@/components/CheckBox";
 	import SearchProduct from "@/components/SearchProduct";
 	import axios from "axios";
 	import qs from "qs";
-
 	export default {
 		data() {
 			return {
 				search: '',
-				sortIndex: -1,
-				sort: ['综合', '最新上架', '价格最低', '价格最高', '评价最多'],
-				optionShow: 0,
-				arr: ['京东物流', '有货优先', '货到付款'],
-				products: []
+				sortIndex:-1,
+				sort:['综合','最新上架','价格最低','价格最高','评价最多'],
+				optionShow:0,
+				products:[]
+			}
+		},
+		methods:{
+			searchProduct(){
+				axios
+				.post('http://api.niyinlong.com/api/product/searchProduct',qs.stringify({keyword:this.search}))
+				.then(res=>{
+					this.products = res.data;
+				})
+				.catch();
 			}
 		},
 		components: {
 			TopBar,
-			CheckBox,
 			SearchProduct
-
-		},
-		methods: {
-			searchProduct() {
-               axios.post('http://api.niyinlong.com/api/product/searchProduct',qs.stringify({}))
-               .then()
-               .catch();
-			}
 		},
 		created() {
 			this.search = this.$route.query.search ? this.$route.query.search : '';
@@ -114,7 +115,7 @@
 		.sort-option {
 			width: 100%;
 			position: fixed;
-			z-index: 999;
+			z-index: 9999;
 			top: 0.9rem;
 			left: 0;
 			height: 0.8rem;
@@ -124,6 +125,7 @@
 			.sort-item {
 				background-color: #FFFFFF;
 				text-align: center;
+				
 				span {
 					position: relative;
 				}
@@ -149,56 +151,46 @@
 					background-size: contain;
 				}
 			}
-			.option-group {
+			
+			.option-group{
 				position: absolute;
 				top: 0.8rem;
 				width: 100%;
 				background-color: #FFFFFF;
-				ul {
+				ul{
 					border-top: solid 1px #e5e5e5;
 				}
-				li {
+				
+				li{
 					padding-left: 0.2rem;
 					border-bottom: solid 1px #e5e5e5;
-					&.active {
+					
+					&.active{
 						color: #e93b3d;
-						background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAUCAMAAACgaw2xAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAA8UExURUdwTOQ6OtQqKuQ4O/8AAOM4O+Q4POI4OuM4O+Q4O+M4O+M5POQ4O+M4O+U4OuU2POQ4POQ4O+Q5O+Q5POG6XjYAAAATdFJOUwAvBl4BstwRzseW9XvrRR2+iVGqKQ+qAAAAaUlEQVQY023PSQ6AIBBEUSZpBhGTuv9dnRAiVq869VdPKXZmj3RXCTxYlMp2nbGxXTxWtrsFi2NhhRe2b8ia7bXAUllEam+M8pWZNyAIlUkY5SsbZZa95S9rhcjuQmVX4bKzdNlcuuy5A/z7BLUpU+pnAAAAAElFTkSuQmCC) right 10px bottom 15px no-repeat;
-						background-size: 12px auto;
 					}
 				}
-				.filter {
+				.filter{
 					position: fixed;
 					top: 0;
-					right: -85%;
+					right:-85%;
 					bottom: 0;
 					background-color: red;
 					width: 85%;
 					transition: right 0.3s linear;
-					&.active {
+					&.active{
 						right: 0;
 					}
 				}
-				.service {
-					border-top: solid 1px #e5e5e5;
-					.service-check {}
-					.select-service {
-						padding-left: 0.2rem;
-						&.actives {
-							color: #e93b3d;
-							background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAUCAMAAACgaw2xAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAA8UExURUdwTOQ6OtQqKuQ4O/8AAOM4O+Q4POI4OuM4O+Q4O+M4O+M5POQ4O+M4O+U4OuU2POQ4POQ4O+Q5O+Q5POG6XjYAAAATdFJOUwAvBl4BstwRzseW9XvrRR2+iVGqKQ+qAAAAaUlEQVQY023PSQ6AIBBEUSZpBhGTuv9dnRAiVq869VdPKXZmj3RXCTxYlMp2nbGxXTxWtrsFi2NhhRe2b8ia7bXAUllEam+M8pWZNyAIlUkY5SsbZZa95S9rhcjuQmVX4bKzdNlcuuy5A/z7BLUpU+pnAAAAAElFTkSuQmCC) right 10px bottom 15px no-repeat;
-							background-size: 12px auto;
-						}
-					}
-				}
 			}
-			.mask {
+			
+			.mask{
 				position: fixed;
 				top: 0;
 				bottom: 0;
 				left: 0;
 				right: 0;
 				z-index: -99;
-				background-color: rgba(0, 0, 0, .3);
+				background-color: rgba(0,0,0,.3);
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 <template>
 	<div id="shopping-cart">
-		<top-bar :shortcut="true">
-			<!--可直接加shortcut为参数默认为true，或上面这种写法-->
+		<top-bar shortcut>
 			<div class="title">购物车</div>
 		</top-bar>
 		<div style="height: 1rem;"></div>

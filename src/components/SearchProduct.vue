@@ -1,5 +1,6 @@
 <template>
-		<div class="search-product flex" @click="$router.push({path:'/product',query:{id:id}})">
+
+	<div class="search-product flex" @click="$router.push({path:'/product',query:{id:id}})">
 
 		<div class="product-image">
 			<img :src="image" v-if="image!=''">
@@ -64,6 +65,7 @@
 		mounted(){},
 		
 	}
+	
 	
 </script>
 

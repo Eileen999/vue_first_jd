@@ -3,19 +3,15 @@
 	<div class="top-bar flex">
 
 		<div class="go-back" @click="$router.go(-1);">
-
 			<span class="back-icon"></span>
-
 		</div>
 
-		<div class="flex-item" style="padding: 0 30px;">
-
+		<div class="flex-item">
 			<slot></slot>
-
 		</div>
-           <slot name="right"></slot>
-           
-		<div class="menu" @click="show=true;" v-if="shortcut">
+
+		<slot name="right"></slot>
+		<div class="menu" v-if="shortcut" @click="show=true;">
 			<span class="menu-icon"></span>
 			<div class="mask" v-show="show" @click.stop="show=false;"></div>
 			<ul v-show="show">
@@ -24,7 +20,6 @@
 						<span class="fa" :class="item.icon"></span>
 						<strong v-text="item.title"></strong>
 					</router-link>
-
 				</li>
 			</ul>
 		</div>
@@ -64,10 +59,11 @@
 					icon: 'fa-share-square-o'
 				}]
 			}
-		},props:{
-			shortcut:{
-				type:Boolean,
-				default:false
+		},
+		props: {
+			shortcut: {
+				type: Boolean,
+				default: false
 			}
 		}
 	}

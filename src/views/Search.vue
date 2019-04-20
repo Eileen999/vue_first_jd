@@ -1,36 +1,40 @@
 <template>
 	<div id="search">
 		<top-bar :shortcut="shortcut">
+			<!--搜索表单-->
 			<div class="search-form">
 				<i class="search-icon"></i>
-				<input type="text" v-model="search" placeholder="请输入搜索内容" />
+				<input type="text" v-model="search" placeholder="请输入搜索内容" @input="searchTips" />
 				<i class="close-icon" v-show="search.length>0" @click="search='';"></i>
-
 			</div>
+
+			<!--搜索按钮-->
 			<template v-slot:right>
 				<div class="search-btn" v-show="!shortcut">
 					<span @click="$router.push({path:'/result',query:{search:search}});">搜索</span>
-					<!--$router.push({name:'result',params:{search:search}})无参数显示方式-->
 				</div>
 			</template>
 		</top-bar>
-		
+
 		<!--热门搜索-->
 		<div class="hot-word">
-			<p>历史搜索   <span class="garbage"></span> </p>
-			<span class="tag" v-for="n in 10">手机{{n}}</span>
+			<p v-if="history.length>0">历史搜索<span class="garbage" @click="history=[];"></span> </p>
+			<span class="tag" v-for="(item,index) in history" v-text="item" :key="index" @click="$router.push({path:'/result',query:{search:item}});"></span>
 			<p>热门搜索</p>
-			<span class="tag" v-for="n in 10">手机{{n}}</span>
+			<span class="tag" v-for="(item,index) in hot" v-text="item" :key="item" @click="$router.push({path:'/result',query:{search:item}});"></span>
 		</div>
-		
+
 		<div class="recommend-word" v-show="search.length>0">
-		
-		<!-- 推荐的词 -->
+			<!-- 推荐的词 -->
 			<ul>
-				<li class="clear" v-for="n in 10"> 手机 <span class="tag right">华为</span> <span class="tag right">华为</span> <span class="tag right">华为</span> </li>
+				<li class="clear" v-for="(item,index) in searchWord" @click="$router.push({path:'/result',query:{search:item.title}});">
+					{{item.title}}
+					<span class="tag right" v-for="(sub,j) in item.tag.split(',')">{{sub}}</span>
+				</li>
 			</ul>
 
 		</div>
+
 		<tab-bar></tab-bar>
 	</div>
 
@@ -39,20 +43,34 @@
 <script>
 	import TopBar from "@/components/TopBar";
 	import TabBar from "@/components/TabBar.vue";
+	import axios from "axios";
+	import qs from "qs";
 	export default {
 		data() {
 			return {
 				shortcut: false,
-				search:'',
-				
+				search: '',
+				searchWord: [],
+				history: ['手机', '男装', '运动鞋'],
+				hot: ['华为手机', '苹果手机', '男人的衣柜', '衣服']
+			}
+		},
+		methods: {
+			searchTips(str) {
+				axios.post('http://api.niyinlong.com/api/product/searchHotWord', qs.stringify({
+					keyword: this.search
+				})).then(res => {
+					console.log(res);
+					this.searchWord = res.data;
+				}).catch();
 			}
 		},
 		components: {
 			TabBar,
 			TopBar
 		},
-		created(){
-			this.search=this.$route.query.search?this.$route.query.search:'';
+		created() {
+			this.search = this.$route.query.search ? this.$route.query.search : '';
 		}
 	}
 </script>
@@ -115,7 +133,8 @@
 				line-height: 0.88rem;
 			}
 		}
-				.recommend-word {
+		/* 搜索推荐词  */
+		.recommend-word {
 			width: 100%;
 			background-color: #FFFFFF;
 			position: fixed;
@@ -152,13 +171,12 @@
 				width: 100%;
 				margin: 0.3rem 0 0.2rem;
 			}
-			
-			.garbage{
+			.garbage {
 				float: right;
 				display: block;
-				width:0.3rem;
+				width: 0.3rem;
 				height: 0.3rem;
-				background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAgCAYAAADqgqNBAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTc0MTUzQTA1RDkyMTFFOUFCRTY4NTg4RDFBRkZFN0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTc0MTUzQTE1RDkyMTFFOUFCRTY4NTg4RDFBRkZFN0YiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NzNGMDlCOTVEOTIxMUU5QUJFNjg1ODhEMUFGRkU3RiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5NzQxNTM5RjVEOTIxMUU5QUJFNjg1ODhEMUFGRkU3RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgXXx1gAAAEXSURBVHjaYvz//z/DQAEmhgEELJmZmcSoUwXiDiB2AWI+POo+AfEeIK4A4tsELSfCYnUgPgHEAkSoBTksCIidgNgCiG9SGuxtUIu3A7EUEDPiwVJQdQJQfRTHuQuUTgbi5wTUPoeqAwE3algOi+NXRKajt1CahxjLDwPxfzwYBv4QUAfDP5H04FN3eCCzGiMotduOyEJmUFl+GIpxAXzyJOvFVsIx4jHAhkw5rGazkGEAucBmNMGNWj5q+QhsQJKo/gieEvAIgdKRYsttyZQbjfPBa/knKC1JZXskoPQXfJbvgdJzkDRQCqSBeC6UvQtfaq+GdnW8iOggkAo+QM3H6fMb0D7WOiD+TCVLP0PNs4CaDwcAAQYAN/lEguxv/y4AAAAASUVORK5CYII=);
+				background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAgCAYAAADqgqNBAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTc0MTUzQTA1RDkyMTFFOUFCRTY4NTg4RDFBRkZFN0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTc0MTUzQTE1RDkyMTFFOUFCRTY4NTg4RDFBRkZFN0YiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NzNGMDlCOTVEOTIxMUU5QUJFNjg1ODhEMUFGRkU3RiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5NzQxNTM5RjVEOTIxMUU5QUJFNjg1ODhEMUFGRkU3RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgXXx1gAAAEXSURBVHjaYvz//z/DQAEmhgEELJmZmcSoUwXiDiB2AWI+POo+AfEeIK4A4tsELSfCYnUgPgHEAkSoBTksCIidgNgCiG9SGuxtUIu3A7EUEDPiwVJQdQJQfRTHuQuUTgbi5wTUPoeqAwE3algOi+NXRKajt1CahxjLDwPxfzwYBv4QUAfDP5H04FN3eCCzGiMotduOyEJmUFl+GIpxAXzyJOvFVsIx4jHAhkw5rGazkGEAucBmNMGNWj5q+QhsQJKo/gieEvAIgdKRYsttyZQbjfPBa/knKC1JZXskoPQXfJbvgdJzkDRQCqSBeC6UvQtfaq+GdnW8iOggkAo+QM3H6fMb0D7WOiD+TCVLP0PNs4CaDwcAAQYAN/lEguxv/y4AAAAASUVORK5CYII=);
 				background-size: contain;
 			}
 			.tag {
@@ -177,6 +195,5 @@
 				margin: 0 0.2rem 0.2rem 0;
 			}
 		}
-
 	}
 </style>

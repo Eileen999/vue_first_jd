@@ -6,8 +6,8 @@ import Login from './views/login.vue'
 import Shopping from './views/Shopping.vue'
 import Category from './views/Category.vue'
 import Search from './views/Search.vue'
-import Product from './views/Product.vue'
 import Result from './views/Result.vue'
+import Product from './views/Product.vue'
 
 Vue.use(Router)
 
@@ -20,6 +20,7 @@ export default new Router({
 		component: Home
 	}, {
 		path: '/user',
+		alias:'/yonghu',
 		name: 'user',
 		component: User
 	}, {
